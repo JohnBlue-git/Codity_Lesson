@@ -23,31 +23,44 @@ int solution_PassingCars(vector<int> &A) {
 
 // GenomicRangeQuery
 // O((N+M)*4) time, O(N*4) space.
-vector<int> solution_GenomicRangeQuery(string &S, vector<int> &P, vector<int> &Q) {
-    int n = (int)S.size();
-    vector<vector<int>> prefix(n + 1, vector<int>(4, 0));
-    auto impact = [](char c) -> int {
-        switch (c) {
-            case 'A': return 0;
-            case 'C': return 1;
-            case 'G': return 2;
-            default:  return 3; // 'T'
-        }
-    };
-    for (int i = 0; i < n; i++) {
-        for (int k = 0; k < 4; k++) prefix[i + 1][k] = prefix[i][k];
-        prefix[i + 1][impact(S[i])]++;
-    }
-
-    vector<int> result;
-    result.reserve(P.size());
-    for (size_t i = 0; i < P.size(); i++) {
-        int p = P[i], q = Q[i];
-        for (int k = 0; k < 4; k++) {
-            if (prefix[q + 1][k] - prefix[p][k] > 0) {
-                result.push_back(k + 1);
-                break;
+vector<int> solution(string &S, vector<int> &P, vector<int> &Q) {
+    // S: ... P ... Q ...
+    // prefix sum (accumulative sum) of A, C, G, T by index
+    size_t n = S.size();
+    vector<char> letters{'A', 'C', 'G', 'T'};
+    vector<vector<int>> preSum(4, vector<int>(n, 0));
+    for (size_t i = 0; i < n; ++i)
+    {
+        if (i > 0)
+        {
+            for (size_t j = 0; j < 4; ++j)
+            {
+                preSum[j][i] = preSum[j][i - 1];
             }
+        }
+        auto& s = S[i];
+        for (size_t j = 0; j < 4; ++j)
+        {
+            if (s == letters[j])
+            {
+                preSum[j][i] += 1;
+            }
+        }
+    }
+    // check 'A', 'C', 'G', 'T' existence and then fill in the lowest impact value
+    size_t m = P.size();
+    vector<int> result(m, 0);
+    for (size_t i = 0; i < m; ++i)
+    {
+        for (size_t j = 0; j < 4; ++j)
+        {
+            if (S[P[i]] != letters[j] &&
+                preSum[j][P[i]] == preSum[j][Q[i]])
+            {
+                continue;
+            }
+            result[i] = j + 1; // impact value of 'A' 1, 'C' 2, 'G' 3 , 'T' 4
+            break;
         }
     }
     return result;

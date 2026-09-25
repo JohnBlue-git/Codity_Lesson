@@ -20,3 +20,30 @@ int solution(int N) {
     }
     return max_gap;
 }
+
+int solution(int n) {
+    // important: int signed bit cannot shift
+    unsigned int N = n;
+    // find first 1
+    while (N != 0 && (N & 1) == 0)
+    {
+        N >>= 1;
+    }
+    // find another 1
+    int max_gap = 0;
+    int current_gap = 0;
+    while (N != 0)
+    {
+        if (N & 1)
+        {
+            max_gap = max(max_gap, current_gap);
+            current_gap = 0;
+        }
+        else
+        {
+            current_gap++;
+        }
+        N >>= 1;
+    }
+    return max_gap;
+}

@@ -30,27 +30,30 @@ int solution_Brackets(string &S) {
 // Process left to right with a stack of downstream fish waiting to meet an
 // oncoming upstream fish.
 // O(N) time (each fish pushed/popped at most once), O(N) space.
-int solution_Fish(vector<int> &A, vector<int> &B) {
-    vector<int> stack; // sizes of downstream fish not yet met
-    int alive = 0;
-    for (size_t i = 0; i < A.size(); i++) {
-        int size = A[i];
-        int direction = B[i];
-        if (direction == 1) { // upstream
-            bool survives = true;
-            while (!stack.empty() && survives) {
-                if (stack.back() < size) {
-                    stack.pop_back(); // downstream fish eaten
-                } else {
-                    survives = false; // this upstream fish gets eaten
-                }
+int solution(std::vector<int> &A, std::vector<int> &B) {
+    size_t n = A.size();
+    std::stack<int> downstream;
+    long long alive_count = 0;
+    for (size_t i = 0; i < n; ++i)
+    {
+        if (B[i])
+        {
+            downstream.push(A[i]);
+        }
+        else
+        {
+            while (!downstream.empty() && downstream.top() < A[i]) {
+                // Q be eaten
+                downstream.pop();
             }
-            if (survives) alive++;
-        } else { // downstream
-            stack.push_back(size);
+            
+            // P survive, and would not meet again
+            if (downstream.empty()) {
+                alive_count++;
+            }
         }
     }
-    return alive + (int)stack.size();
+    return alive_count + downstream.size();
 }
 
 // Nesting

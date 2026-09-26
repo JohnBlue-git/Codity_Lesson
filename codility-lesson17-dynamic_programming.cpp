@@ -11,18 +11,34 @@ using namespace std;
 // Forward DP: best score reaching field i is A[i] plus the best score among
 // the 6 fields that could jump to it.
 // O(N) time (fixed window of at most 6), O(N) space.
-int solution_NumberSolitaire(vector<int> &A) {
-    int n = (int)A.size();
+// int solution_NumberSolitaire(vector<int> &A) {
+//     int n = (int)A.size();
+//     vector<long long> dp(n, LLONG_MIN);
+//     dp[0] = A[0];
+//     for (int i = 1; i < n; i++) {
+//         long long best = LLONG_MIN;
+//         for (int j = max(0, i - 6); j < i; j++) {
+//             best = max(best, dp[j]);
+//         }
+//         dp[i] = A[i] + best;
+//     }
+//     return (int)dp[n - 1];
+// }
+#include <climits>
+#include <algorithm>
+int solution(vector<int> &A) {
+    size_t n = A.size();
+    // max can be achieve on []
     vector<long long> dp(n, LLONG_MIN);
-    dp[0] = A[0];
-    for (int i = 1; i < n; i++) {
-        long long best = LLONG_MIN;
-        for (int j = max(0, i - 6); j < i; j++) {
-            best = max(best, dp[j]);
-        }
-        dp[i] = A[i] + best;
+    dp[0] = (long long)A[0];
+    auto bg = dp.begin();
+    for (size_t i = 1; i < n; ++i)
+    {
+        auto dieSt = bg + max(0, (int)i - 6);
+        auto dieEd = bg + i;
+        dp[i] = A[i] + *max_element(dieSt, dieEd);
     }
-    return (int)dp[n - 1];
+    return dp[n - 1];
 }
 
 // MinAbsSum

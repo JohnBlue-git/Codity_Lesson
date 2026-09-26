@@ -7,10 +7,14 @@ using namespace std;
 
 // Distinct
 // O(N log N) time (sort-based), O(N) space.
+// int solution_Distinct(vector<int> A) {
+//     sort(A.begin(), A.end());
+//     A.erase(unique(A.begin(), A.end()), A.end());
+//     return (int)A.size();
+// }
 int solution_Distinct(vector<int> A) {
-    sort(A.begin(), A.end());
-    A.erase(unique(A.begin(), A.end()), A.end());
-    return (int)A.size();
+    unordered_set<int> S(A.begin(), A.end());
+    return S.size();
 }
 
 // MaxProductOfThree
@@ -18,10 +22,13 @@ int solution_Distinct(vector<int> A) {
 // O(N log N) time, O(1) extra space.
 int solution_MaxProductOfThree(vector<int> A) {
     sort(A.begin(), A.end());
-    int n = (int)A.size();
-    long long a = (long long)A[n - 1] * A[n - 2] * A[n - 3];
-    long long b = (long long)A[0] * A[1] * A[n - 1];
-    return (int)max(a, b);
+    size_t n = A.size();
+    long long maxProduct = (long long)A[n - 1] * A[n - 2] * A[n - 3];
+    if (A[1] < 0)
+    {
+        maxProduct = max(maxProduct, (long long)A[n - 1] * A[0] * A[1]);
+    }
+    return maxProduct;
 }
 
 // Triangle
